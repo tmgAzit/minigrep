@@ -9,7 +9,7 @@ use std::process;
 use minigrep::Config;
 fn main() {
     // Reading arguments value
-    let args: Vec<String> = env::args().collect();
+    // let args: Vec<String> = env::args().collect();
 
     // Saving the argument values in variables
     // let programname = &args[0];
@@ -17,7 +17,7 @@ fn main() {
     // let filename = &args[2];
 
     //Extraction of parse_config function from main
-    let config = Config::new(&args).unwrap_or_else(|err| {
+    let config = Config::build(env::args()).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });

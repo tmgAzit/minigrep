@@ -17,12 +17,22 @@ pub struct Config {
 
 //parsing function
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
-        let query = args[1].clone();
-        let filename = args[2].clone();
+    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+
+        // if args.len() < 3 {
+        //     return Err("not enough arguments");
+        // }
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string."),
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
 
         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
@@ -95,15 +105,20 @@ mod test {
 
 // defining the search function
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
+    //let mut results = Vec::new();
 
     // iterating through each line in contents
-    for line in contents.lines() {
-        if line.trim().contains(query) {
-            results.push(line.trim());
-        }
-    }
-    results
+    // for line in contents.lines() {
+    //     if line.trim().contains(query) {
+    //         results.push(line.trim());
+    //     }
+    // }
+    //results
+
+    contents
+        .lines()
+        .filter(|line| line.trim().contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitivity<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
